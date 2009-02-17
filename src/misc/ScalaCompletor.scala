@@ -38,7 +38,10 @@ object ScalaCompletor {
   }
   
   def getClassFilesFromDir(dir: File) = {
-    def allFiles(f: File): List[File] = if (f.isDirectory) f.listFiles.toList flatMap allFiles else List(f)
+    def allFiles(f: File): List[File] = 
+      if (f == null) Nil
+      else if (f.isDirectory) f.listFiles.toList flatMap allFiles
+      else List(f)
     val root = dir.getAbsolutePath
 
     for {
