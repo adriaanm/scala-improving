@@ -26,7 +26,7 @@
 
   <target name="compile" depends="init">
     <scalac srcdir="${sources}" destdir="${classes}"
-			deprecation="on" unchecked="on" encoding="UTF-8" addparams="-Xfuture -optimise"
+			deprecation="on" unchecked="on" encoding="UTF-8" addparams=""
 			classpathref="build.classpath" force="changed"/>
   </target>
 

@@ -10,6 +10,8 @@ import scala.util.matching.Regex
 import java.lang.{ reflect => r }
 
 object Reflection {
+  implicit def rmethodToMethod(x: r.Method) = new Method(x)
+  implicit def rttot(x: Class[_]): SClass[_] = new SClass(x)
   implicit def rttot(rt: r.Type): Type = rt match {
     case x: r.ParameterizedType   => new ParameterizedType(x)
     case x: r.GenericArrayType    => new GenericArrayType(x)
@@ -32,7 +34,11 @@ object Reflection {
     // names for types in the same package as the type being inspected
     final def toScalaString: String = decode(getName)  
     final def typeToString(x: r.Type) = x.pkgRelativeString(pkg)
-    final def typesToString(xs: List[r.Type]) = xs.map(typeToString) mkString ", "
+    // final def typesToString(xs: List[r.Type]) = xs.map(typeToString) mkString ", "
+    final def typesToString(xs: List[r.Type]) = {
+      val ps = for ((t, i) <- xs.map(typeToString).zipWithIndex) yield "p%d: %s".format(i + 1, t)
+      ps mkString ", "
+    }
     
     final def pkgRelativeString(thePkg: String) = {
       val str = toScalaString
@@ -102,7 +108,7 @@ object Reflection {
     def argsString: String = "(" + typesToString(formalTypes) + ")"
     def retString: String = retType.map(x => ": " + typeToString(x)) getOrElse ""
     def isSynthetic = ref.isSynthetic
-    def getName = getModifierString + descriptor + " " + getIdentifier + paramString + argsString + retString
+    def getName = /* getModifierString + */ descriptor + " " + getIdentifier + paramString + argsString + retString
   }
   
   class Method(val ref: r.Method) extends Member(ref) with Parameterizable {
@@ -110,7 +116,14 @@ object Reflection {
     def paramTypes  = ref.getTypeParameters.toList
     def retType     = Some(ref.getGenericReturnType)
     def formalTypes = ref.getGenericParameterTypes.toList
-    def excTypes    = ref.getGenericExceptionTypes.toList    
+    def excTypes    = ref.getGenericExceptionTypes.toList
+    
+    def isStructurallyEqual(m: Method) = {
+      val other = m.ref
+      ref.getName == other.getName &&
+      ref.getReturnType == other.getReturnType &&
+      ref.getParameterTypes.toList == other.getParameterTypes.toList
+    }
   }
   
   class Constructor[T](val ref: r.Constructor[T]) extends Member(ref) with Parameterizable {
