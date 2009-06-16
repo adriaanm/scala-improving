@@ -21,4 +21,6 @@ object Files
     if (depth <= 0) files
     else files ++ files.filter(x => x != null && x.isDirectory).flatMap(x => filesAndDirs(x, depth - 1))
   }
+  
+  def stdin(): Stream[String] = scala.io.Source.fromInputStream(System.in).getLines.toStream map (_.trim)
 }

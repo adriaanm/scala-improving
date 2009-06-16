@@ -10,6 +10,7 @@ package org.improving
 import java.lang.reflect.Field
 import java.net.URL
 import java.security.{ AccessController, AccessControlContext, CodeSource, Permission, ProtectionDomain }
+import scala.collection.immutable
 
 class SM extends SecurityManager
 {
@@ -84,15 +85,13 @@ object SM
   // return a policy file as a string
   def policy(): String = {
     val cache = System.getSecurityManager match {
-      case sm: SM   => sm.cache.toList
+      case sm: SM   => sm.cache // .toList
       case _        => return "SM not installed.\n"
     }
     
     // fold the cache into one map per codebase and format the string
-    val emptyMap = Map[String, Set[String]]() withDefaultValue Set()
-    val map = cache.foldLeft(emptyMap) { case (xs, rule) => xs(rule.url) += rule.permStr }
-    val strs = for ((cb, rules) <- map) yield
-      rules.toList.sort(_ < _).mkString("grant codebase \"" + cb + "\" {\n  ", "\n  ", "\n}\n")
+    val strs = for ((cb, rules) <- (cache groupBy (_.url))) yield
+      rules.toList.map(_.toString).sort(_ < _).mkString("grant codebase \"" + cb + "\" {\n  ", "\n  ", "\n}\n")
     
     strs.mkString("\n")
   }  

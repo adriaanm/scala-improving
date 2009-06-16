@@ -8,7 +8,7 @@
 package org.improving.misc
 
 import java.net._
-import reflect.Reflection._
+// import reflect.Reflection._
 
 object Browser {
   final val errMsg = "Error attempting to launch web browser"
