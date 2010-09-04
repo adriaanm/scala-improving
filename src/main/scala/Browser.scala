@@ -5,12 +5,12 @@
  * "Public Domain Software -- Free to Use as You Like"
  */
 
-package org.improving.misc
+package improving
+package misc
 
 import java.net._
-// import reflect.Reflection._
 
-object Browser {
+trait Browser {
   final val errMsg = "Error attempting to launch web browser"
   
   // XXX use java 6 Desktop methods if java is 6
@@ -45,3 +45,5 @@ object Browser {
     Runtime.getRuntime.exec(Array[String](browser, url))
   }
 }
+
+object Browser extends Browser

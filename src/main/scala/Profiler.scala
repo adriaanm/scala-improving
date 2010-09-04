@@ -1,6 +1,7 @@
-package org.improving.yourkit
+package improving
+package yourkit
 
-object Profiler {  
+trait Profiler {
   import _root_.com.yourkit.api._
   private var active = false
   lazy val controller = new Controller
@@ -27,3 +28,5 @@ object Profiler {
   
   def isActive = active
 }
+
+object Profiler extends Profiler

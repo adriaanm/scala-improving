@@ -1,8 +1,9 @@
-package org.improving.collection
+package improving
+package collection
 
-object Additions {
-  implicit def improvingDotOrgEnrichStream[T](x: Stream[T]): RichStream[T] = new RichStream(x)
-  implicit def improvingDotOrgEnrichList[T](x: List[T]): RichList[T] = new RichList(x)
+trait TraversableAdditions {
+  implicit def improvingEnrichStream[T](x: Stream[T]): RichStream[T] = new RichStream(x)
+  implicit def improvingEnrichList[T](x: List[T]): RichList[T] = new RichList(x)
   
   class RichStream[T](xs: Stream[T]) {
     def tails(): Stream[Stream[T]] =
@@ -19,3 +20,5 @@ object Additions {
     def inits(): List[List[T]] = assemble(xs.init.inits)
   }
 }
+
+object TraversableAdditions extends TraversableAdditions 
