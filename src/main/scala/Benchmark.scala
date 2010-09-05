@@ -4,6 +4,8 @@ package benchmark
 import scala.collection.mutable.ListBuffer
 
 trait Benchmark {
+  private def coinflip(): Boolean = math.abs(util.Random.nextInt()) % 2 == 0
+  
   case class Run[+T](result: T, millis: Long)
   case class RaceResult(time1: Long, time2: Long) {
     def speedup = math.abs(time2 - time1) * 100 / (time2 max time1)
@@ -54,8 +56,19 @@ trait Benchmark {
     }
     
     def apply(reps: Int) = {
-      val time1 = multitime(reps)(f1())
-      val time2 = multitime(reps)(f2())
+      /** Ham-fisted attempt to avoid first-run bias. */
+      val (time1, time2) = {
+        if (coinflip()) {
+          val t1 = multitime(reps)(f1())
+          val t2 = multitime(reps)(f2())
+          (t1, t2)
+        }
+        else {
+          val t2 = multitime(reps)(f2())
+          val t1 = multitime(reps)(f1())
+          (t1, t2)
+        }
+      }
       
       RaceResult(time1, time2)
     }
