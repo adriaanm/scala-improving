@@ -1,8 +1,8 @@
 #!/bin/sh -f
-exec scala $0 $@
+  exec scala $0 $@
 !#
 
-/*
+/**
  * scalawhich
  * @author Paul Phillips <paulp@improving.org>
  *
@@ -11,13 +11,7 @@ exec scala $0 $@
  *
  */
 
-import java.io.File
-import java.util.Enumeration
-import java.util.zip.{ ZipFile, ZipEntry }
-import scala.tools.nsc._
-import util.ClassPath
-import collection.mutable
-import io._
+import improving.util.ScalaWhich
 
 // very simple parsing, -cp is the only option we accept
 def cmdLine(): (String, List[String]) = 
@@ -33,68 +27,5 @@ if (classes.length == 0) {
   println("Usage: scalawhich [-cp classpath] class1 class2 ...")
   System exit 0
 }
+improving.util.ScalaWhich(cp).show(args: _*)
 
-val settings = new Settings((x: String) => ())
-if (cp != "")
-  settings.classpath.value = cp
-  
-val reporter = new reporters.ConsoleReporter(settings)
-val global = new Global(settings, reporter)
-import global.classPath
-
-// todo - figure out what jar contents and etc. look like on windows
-case class ClassInfo(name: String, locations: List[String]) {
-  val sep = File.separatorChar
-  // transform supplied name into a path of the right sort
-  lazy val canon: String = name.replaceAll("""\.class$""", "").replace('.', '/').replaceAll("""^\/+""", "") match {
-    case x if x endsWith ".class" => x
-    case x                        => x + ".class"
-  }
-  
-  def result(): String = locations match {
-    case Nil      => name + ": could not find " + canon + " on classpath"
-    case x :: Nil => name + ": found in " + x
-    case xs       => name + ": found in " + xs.size + " locations, first was " + xs.head
-  }  
-  def append(path: String): ClassInfo = new ClassInfo(name, locations ::: List(path))
-}
-
-object ClasspathElement {
-  def apply(path: String) =
-    if ((path endsWith ".zip") || (path endsWith ".jar")) new CPZip(path)
-    else new CPDir(path)
-}
-sealed abstract class ClasspathElement {
-  val path: String
-  def contains(name: String): Boolean
-}
-
-class CPZip(val path: String) extends ClasspathElement {
-  val zip = new ZipFile(path)
-  def contains(name: String) = zip.getEntry(name) != null
-}
-class CPDir(val path: String) extends ClasspathElement {
-  val sep = File.separatorChar
-  def contains(name: String) = {
-    val file = new java.io.File(path + sep + name)
-    file.exists
-  }
-}
-
-final def searchOne(infos: List[ClassInfo], cp: ClasspathElement): List[ClassInfo] = {
-  for (info <- infos) yield 
-    if (cp contains info.canon) info.append(cp.path) else info
-}
-
-// set up our classes; the reverse/remove/reverse is so duplicates are dropped from the end
-val infos = classes map (x => ClassInfo(x, Nil))
-val paths = classPath.entries.toList.map(_.location.path).reverse.removeDuplicates.reverse
-val cps = paths map (x => ClasspathElement(x))
-val results = cps.foldLeft(infos)(searchOne)
-
-// print the results
-println(results.map(_.result + "\n").mkString)
-
-// if there are classes we did not find, print the classpath
-if (results.exists(_.locations.isEmpty))
-  println("[Classpath = " + paths.mkString(File.pathSeparator) + "]")

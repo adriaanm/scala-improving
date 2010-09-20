@@ -2,9 +2,10 @@ package improving
 package benchmark
 
 import scala.collection.mutable.ListBuffer
+import scala.util.Random
 
 trait Benchmark {
-  private def coinflip(): Boolean = math.abs(util.Random.nextInt()) % 2 == 0
+  private def coinflip(): Boolean = math.abs(Random.nextInt()) % 2 == 0
   
   case class Run[+T](result: T, millis: Long)
   case class RaceResult(time1: Long, time2: Long) {
