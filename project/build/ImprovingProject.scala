@@ -17,6 +17,10 @@ class ImprovingProject(info: ProjectInfo)
   // register credentials
   net.ps.github.Credentials(Path.userHome / ".github" / "credentials")
   
+  // local use
+  // override def localScala =
+  //   defineScala("2.8.0-local", new java.io.File("/scala/trunk/target/pack")) :: Nil
+  
   override val publishTo = Some(improvingRepo)
   override val publishToGithub = true
 }
