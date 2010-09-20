@@ -1,0 +1,7 @@
+git checkout publish
+git rebase master
+reload
+publish
+git checkout -f master
+git clean -f -d project
+reload

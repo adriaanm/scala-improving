@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# A hook which checks if the branch change is back to
+# master and blows away ~/project/plugins if so.
+
+masterRev=`cat .git/refs/heads/master`
+
+if [ $masterRev == $2 ]; then
+  git clean -f -d $GIT_DIR/../project/plugins
+fi
