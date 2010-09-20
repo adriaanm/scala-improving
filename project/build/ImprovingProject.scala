@@ -1,12 +1,22 @@
 import sbt._
 
-class ImprovingProject(info: ProjectInfo) extends DefaultProject(info) {  
-  // disable sbt's scala jar handling so we can get sources easily
-  // override def filterScalaJars = false
-  // val scalac_280   = "org.scala-lang" % "scala-compiler" % "2.8.0" withSources()
-  // val scalalib_280 = "org.scala-lang" % "scala-library" % "2.8.0" withSources()
+class ImprovingProject(info: ProjectInfo)
+        extends DefaultProject(info)
+           with net.ps.GithubPlugin {  
 
-  // bunch of repositories
-  val localMaven   = "Maven" at "file://"+Path.userHome+"/.m2/repository"
-  val localIvy     = "Ivy" at "file://"+Path.userHome+"/.ivy2/local"
+  // repos
+  val localMaven    = "Maven" at "file://"+Path.userHome+"/.m2/repository"
+  val localIvy      = "Ivy" at "file://"+Path.userHome+"/.ivy2/local"
+  val pluginRepo    = githubRepo("siasia/plugin")
+  val uploaderRepo  = githubRepo("siasia/uploader")
+  val improvingRepo = githubRepo("paulp/scala-improving")
+
+  // dependencies
+  val uploader = "net.ps" % "github-uploader_2.7.7" % "1.0"
+  
+  // register credentials
+  net.ps.github.Credentials(Path.userHome / ".github" / "credentials")
+  
+  override val publishTo = Some(improvingRepo)
+  override val publishToGithub = true
 }
