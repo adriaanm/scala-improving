@@ -1,10 +1,16 @@
+/** Improving: An unconstrained collection of scala code.
+ *  Copyright 2005-2010 Paul Phillips
+ * 
+ *  Distributed under the "Simplified BSD License" in LICENSE.txt.
+ */
+
 package improving
 package security
 
-/* LoggingSM
+/** LoggingSM
  *
- * Inspired by the java version by Mark Petrovic available at
- *   http://www.onjava.com/pub/a/onjava/2007/01/03/discovering-java-security-requirements.html
+ *  Inspired by the java version by Mark Petrovic available at
+ *    http://www.onjava.com/pub/a/onjava/2007/01/03/discovering-java-security-requirements.html
  *
  * @author Paul Phillips <paulp@improving.org>
  */

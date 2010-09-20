@@ -1,0 +1,6 @@
+First release.  Some of the contents:
+
+1. LoggingSM: a security manager which will observe some goings-on and output a policy file which corresponds to the permissions one would need to do those things.
+2. Benchmark: some benchmarking routines.
+    
+And various and sundry tidbits.  More to come now that things have somewhere to go.
