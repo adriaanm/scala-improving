@@ -31,11 +31,11 @@ sealed abstract class AnyExt[T](value: T) {
     value
   }
 
-  def toAnyRef  = to[AnyRef]
-  def to[T] : T = value.asInstanceOf[T]
+  def toAnyRef  = castTo[AnyRef]
+  def castTo[T] : T = value.asInstanceOf[T]
   def safeTo[T: Manifest]: Option[T] = {
     if (manifest[T].typeArguments.nonEmpty) None    // can't be safe
-    else if (manifest[T].erasure isAssignableFrom toClass) Some(to[T])
+    else if (manifest[T].erasure isAssignableFrom toClass) Some(castTo[T])
     else None
   }
 }
