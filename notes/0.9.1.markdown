@@ -1,0 +1,2 @@
+Reflection utilities, including the former scala.reflect.Invocation.
+Manifesty implicits.  Function creation utilities.
