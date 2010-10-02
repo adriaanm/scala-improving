@@ -7,15 +7,25 @@
 package improving
 
 import scala.reflect.OptManifest
+import collection.TraversableExt
 
 package object reflect {
   type JClass[T]   = java.lang.Class[T]
   type JMethod     = java.lang.reflect.Method
   type ScalaSymbol = scala.Symbol
   
+  /** This will only be as good as the erased type.
+   */
+  def typeCollector[A <: AnyRef: Manifest] : PartialFunction[Any, A] = {
+    val erasure = manifest[A].erasure;
+    
+    { case x: AnyRef if erasure.isAssignableFrom(x.getClass)  => x.asInstanceOf[A] }
+  }
+  
   implicit def makeAnyRefExt[T <: AnyRef : OptManifest](x: T): AnyRefExt[T] = new AnyRefExt(x)
   implicit def makeAnyValExt[T <: AnyVal : OptManifest](x: T): AnyValExt[T] = new AnyValExt(x)
   implicit def makeAnyAnyExt(x: Any): AnyAnyExt = new AnyAnyExt(x)
+  implicit def makeTraversableExt[A, CC[X] <: Traversable[X]](coll: CC[A]) = new TraversableExt[A, CC](coll)
   
   /** We also require an implicit on scala.Symbol so they appear to contain
    *  an apply method, which packages the method arguments.  The type parameter

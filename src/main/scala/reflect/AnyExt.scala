@@ -9,6 +9,29 @@ package reflect
 
 import scala.reflect.{ Manifest, ClassManifest, OptManifest, NoManifest }
 
+object Numerical {
+  import scala.math.ScalaNumber
+  import java.lang.{ Number, Character, Comparable }
+  import java.io.Serializable
+  import Manifest._
+  
+  /** Analyzes the manifest to see if there's any chance this is a
+   *  primitive or boxed primitive numeric.
+   */
+  def isPossiblyNumeric[T: ClassManifest](x: T): Boolean = isPossiblyNumeric[T]
+  def isPossiblyNumeric[T: ClassManifest] : Boolean = {
+    val m = classManifest[T]
+    
+    (m == Any) ||
+    (m == Object) ||
+    (m == classManifest[Character]) ||
+    ((m <:< AnyVal) && (m != Boolean) && (m != Unit)) ||
+    ((m <:< classManifest[Number]) && !(m <:< classManifest[ScalaNumber])) ||
+    (m == classManifest[Serializable]) ||
+    (m == classManifest[Comparable[_]])
+  }
+}
+
 /**   In order to encapsulate anything to do with reflection, we must
  *    overcome an issue with the boxing of primitives.  If we declare a
  *    method which takes arguments of type Any, by the time the
@@ -31,6 +54,8 @@ sealed abstract class AnyExt[T](value: T) {
     value
   }
 
+  def hasModuleName = toClass.getName endsWith "$"
+  def toShortClassName: String = toClass.getName split '.' last
   def toAnyRef  = castTo[AnyRef]
   def castTo[T] : T = value.asInstanceOf[T]
   def safeTo[T: Manifest]: Option[T] = {
@@ -65,6 +90,10 @@ final class AnyValExt[T <: AnyVal : OptManifest](value: T) extends AnyExt(value)
 final class AnyRefExt[T <: AnyRef : OptManifest](value: T) extends AnyExt(value) {
   private def optManifest = implicitly[OptManifest[T]]
   
+  def toCompanionName = toClass.getName + (
+    if (hasModuleName) "" else "$"
+  )
+  def toCompanion: AnyRef     = Class forName toCompanionName getField "MODULE$" get null
   def methods: List[JMethod]  = toClass.getMethods.toList
   def toManifest: Manifest[T] = (optManifest match {
     case x: Manifest[T]   => x

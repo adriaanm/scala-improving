@@ -1,0 +1,3 @@
+collections: typeFilter, flatCollect.
+Magicish Eq trait with type equality logic and other bits: you mix it in, define what is relevant to an equals check, and are granted a decent equals.
+Numerical.isPossiblyNumeric.
