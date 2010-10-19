@@ -5,7 +5,6 @@
  */
 
 package improving
-package collection
 
 import scala.collection.{ mutable, immutable, generic }
 import scala.collection.TraversableLike

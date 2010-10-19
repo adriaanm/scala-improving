@@ -49,6 +49,10 @@ sealed abstract class AnyExt[T](value: T) {
   def toClass: JClass[_ <: T]
   def methods: List[JMethod]
 
+  /** Forward pipe */
+  def |>[U](f : T => U) = f(value)
+
+  /** Execute some side effecting code, then result in this value. */
   def tap(body: => Unit): T = {
     body
     value
