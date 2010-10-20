@@ -25,6 +25,8 @@ trait Benchmark {
     override def toString = resultString
   }
   case class Race[+T, +U](f1: () => T, f2: () => U) {
+    var isDebug = false
+    
     /** Keeps dialing up the repetitions until the same speedup is
      *  seen on three consecutive races.
      */
@@ -38,12 +40,19 @@ trait Benchmark {
         else (reps * 6 / 5)
       }
       def loop(reps: Int): (Int, RaceResult) = {
+        if (isDebug)
+          println("converge() now looping with " + reps + " reps.")
+
         results += this(reps)
         
         if (results.size >= 3 && lastThree.distinct.size == 1)
           (reps, results.last)
-        else
+        else {
+          if (isDebug) {
+            println(results.last)
+          }
           loop(nextReps(reps))
+        }
       }
 
       loop(startReps)

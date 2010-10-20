@@ -57,6 +57,10 @@ sealed abstract class AnyExt[T](value: T) {
     body
     value
   }
+  
+  /** conformance tests */
+  def scala_<:<[T: Manifest](other: T) = toManifest <:< manifest[T]
+  def weak_<:<[T: Manifest](other: T)  = toManifest weak_<:< manifest[T]
 
   def hasModuleName = toClass.getName endsWith "$"
   def toShortClassName: String = toClass.getName split '.' last

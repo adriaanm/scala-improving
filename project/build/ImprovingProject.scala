@@ -11,11 +11,12 @@ class ImprovingProject(info: ProjectInfo)
   // local use
   override def localScala = System.getenv("scala.local") match {
     case null   => Nil
-    case path   => List(defineScala("2.8.0-local", new java.io.File(path)))
+    case path   => List(defineScala("2.8.1-local", new java.io.File(path)))
   }
   
   // testing
   val scalacheck = "org.scala-tools.testing" %% "scalacheck" % "1.7" % "test" withSources()
+  val specs      = "org.scala-tools.testing" %% "specs" % "1.6.6" % "test" withSources()
 }
 
 // a dummy trait on the main branch, see the publish branch for implementation.

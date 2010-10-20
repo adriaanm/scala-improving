@@ -5,7 +5,7 @@
  */
 
 package improving
-package util
+package equality
 
 // import reflect.Manifest
 
@@ -16,7 +16,7 @@ package util
  *
  *{{{
     // notice only x is passed to the superclass
-    class Measurement[T: Manifest](x: Int, y: Int) extends improving.util.Eq[T](x) { }
+    class Measurement[T: Manifest](x: Int, y: Int) extends improving.equality.Eq[T](x) { }
     class Velocity
     class Distance
     new Measurement[Velocity](5, 0) == new Measurement[Velocity](5, 0)      // true

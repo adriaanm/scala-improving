@@ -14,6 +14,7 @@ trait Implicits {
   implicit def makeAnyValExt[T <: AnyVal : OptManifest](x: T): AnyValExt[T] = new AnyValExt(x)
   implicit def makeAnyAnyExt(x: Any): AnyAnyExt = new AnyAnyExt(x)
   implicit def makeTraversableExt[A, CC[X] <: Traversable[X]](coll: CC[A]) = new TraversableExt[A, CC](coll)
+  implicit def makeManifestExt[T](m: Manifest[T]): ManifestExt[T] = new ManifestExt[T](m)
   
   /** We also require an implicit on scala.Symbol so they appear to contain
    *  an apply method, which packages the method arguments.  The type parameter
