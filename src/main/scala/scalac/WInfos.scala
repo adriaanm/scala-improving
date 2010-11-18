@@ -14,7 +14,6 @@ trait WInfos {
   
   import global._
   import analyzer.{ ImplicitInfo, ImportInfo }
-  // import 
 
   case class WImportInfo(val info: ImportInfo) {
     lazy val Import(qual, selectors) = info.tree

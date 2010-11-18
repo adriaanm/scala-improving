@@ -39,8 +39,18 @@ class WContexts {
       }
       pairs groupBy (_._1) mapValues (_ map (_._2)) toMap
     }
+    def showConversions = {
+      val width = conversions.keys map (_.toString.length) max;
+      val fmt = "%" + width + "s => %s"
+      
+      conversions.toList sortBy (_._1.toString) foreach {
+        case (k, v) => println(fmt.format(k, v mkString " | "))
+      }
+    }
+    
     def parameters = implicitSyms filter (_.isTerm) collect {
       case x if x.paramss.isEmpty || x.paramss.head.isEmpty || x.paramss.head.head.isImplicit => x
     }
   }
 }
+
