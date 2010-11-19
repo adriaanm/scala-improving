@@ -1,0 +1,8 @@
+DiskBackedConcurrentMap.
+EqHelper/Hashable.
+Full implementation of weak conformance.
+Manifest pimps.
+Magic "symbolize" implementation: 'foo = 3
+Zero.
+Many compiler helper functions.
+Lazy bitmap extractor.
