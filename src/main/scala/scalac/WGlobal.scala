@@ -167,7 +167,6 @@ object WGlobal {
       case null   => s.usejavacp.value = true
       case cp     => s.classpath.value = cp
     }
-    // s.Ylogcp.value = true
     s    
   }
 
@@ -188,7 +187,6 @@ object WGlobal {
     val global = new Global(s, r)
     
     new global.Run()
-    
     global
   }
   
