@@ -51,11 +51,10 @@ final class RichClass[T](val self: JClass[T]) extends Proxy {
     classOf[NullPointerException],
     classOf[ClassCastException]
   )
-  
   // Experimental!
   // scala> classOf[String].reflectiveCall[Array[String]]("ababab", "split")("b")
   // res0: Array[String] = Array(a, a, a)
-    
+  
   /** A class representing a reflective method call.  It is a function object
    *  and will make the call with whatever args are given via apply, or it will
    *  throw an exception at that point if there was an error in creation.

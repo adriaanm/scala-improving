@@ -112,4 +112,17 @@ final class AnyRefExt[T <: AnyRef : OptManifest](value: T) extends AnyExt(value)
     case x: Manifest[T]   => x.erasure
     case _                => if (value == null) null else value.getClass
   }).asInstanceOf[Class[T]]
+  
+  /** It's not easy... to be... me... */
+  def superMans: List[Manifest[_]] = supers map (_.toManifest)
+  def superNames = supers map (_.getName)
+  def interfaces: List[JClass[_]] = supers filter (_.isInterface)
+
+  def supers: List[JClass[_]] = {
+    def loop(x: JClass[_]): List[JClass[_]] = x.getSuperclass match {
+      case null   => List(x)
+      case sc     => x :: (x.getInterfaces.toList flatMap loop) ++ loop(sc)
+    }
+    loop(clazz).distinct
+  }
 }
