@@ -123,6 +123,6 @@ final class AnyRefExt[T <: AnyRef : OptManifest](value: T) extends AnyExt(value)
       case null   => List(x)
       case sc     => x :: (x.getInterfaces.toList flatMap loop) ++ loop(sc)
     }
-    loop(clazz).distinct
+    loop(toClass).distinct
   }
 }
