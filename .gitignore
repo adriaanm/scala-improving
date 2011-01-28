@@ -1,3 +1,5 @@
 /classes
 /*.jar
 .scala_dependencies
+.ensime*
+ensime_port

@@ -45,7 +45,7 @@ class LazyInfo[T <: AnyRef](underlying: T) {
     
     methods exists (m => isSetter(m) || isTraitSetter(m))    
   }
-  private def onError(msg: String) = Predef.error("No lazy val " + msg)
+  private def onError(msg: String) = sys.error("No lazy val " + msg)
   private def bitmapNum(f: Field)  = f.getName dropWhile (_ != '$') drop 1 toInt
   def bitmapNamed(name: String)    = bitmaps find (_.getName == name)
   def accessorNamed(name: String)  = lazyFields find (_.getName == name)

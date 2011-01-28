@@ -24,7 +24,9 @@ class WGlobal(g: Global) extends {
   import analyzer.NoContext
   
   lazy val repl = new Interpreter(g.settings)
-  import repl.power
+  lazy val power = repl.power
+  // lazy val power = new interpreter.Power(repl)
+
   private implicit def stringToPhase(name: String): Phase = currentRun phaseNamed name
   
   // import analyzer._
@@ -167,7 +169,6 @@ object WGlobal {
       case null   => s.usejavacp.value = true
       case cp     => s.classpath.value = cp
     }
-    // s.Ylogcp.value = true
     s    
   }
 
@@ -188,7 +189,6 @@ object WGlobal {
     val global = new Global(s, r)
     
     new global.Run()
-    
     global
   }
   

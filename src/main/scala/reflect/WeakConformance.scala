@@ -27,7 +27,7 @@ object WeakConformance {
     xs.reduceLeft { (m1, m2) =>
       if (m1 weak_<:< m2) m2
       else if (m2 weak_<:< m1) m1
-      else error(m1 + ", " + m2)
+      else sys.error(m1 + ", " + m2)
     }
 
   def unify[A, B, C](a: A, b: B)(implicit ev: weak_unify[A, B, C]): (C, C) = (ev.aToC(a), ev.bToC(b))

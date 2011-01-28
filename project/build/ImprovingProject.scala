@@ -17,9 +17,15 @@ class ImprovingProject(info: ProjectInfo)
 
   // local use
   override def localScala = System.getenv("scala.local") match {
-    case null   => Nil
-    case path   => List(defineScala("2.8.1-local", new java.io.File(path)))
+    case null   => super.localScala
+    case path   => 
+      log.info("Found scala.local: " + path)
+      List(defineScala("2.9.0-local", new java.io.File(path)))
   }
+    
+  // override def consoleOptions = List(
+  //   CompileOption("-Xnojline")
+  // )
 
   // no idea how one is supposed to do this
   def replClasspathString: String = mainDependencies.scalaJars +++ compileClasspath absString;
@@ -27,7 +33,7 @@ class ImprovingProject(info: ProjectInfo)
   
   // testing
   val scalacheck = "org.scala-tools.testing" %% "scalacheck" % "1.7" % "test" withSources()
-  val specs      = "org.scala-tools.testing" %% "specs" % "1.6.6" % "test" withSources()
+  val specs      = "org.scala-tools.testing" %% "specs" % "1.6.7" % "test" withSources()
 }
 
 // a dummy trait on the main branch, see the publish branch for implementation.

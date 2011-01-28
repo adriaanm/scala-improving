@@ -22,7 +22,7 @@ trait AnyFn[+T] extends (Any => T) {
   def char(x: Char): T
   def unit(x: Unit): T
   
-  def ifAnyVal(x: AnyVal): T = error("impossible")  // for completeness
+  def ifAnyVal(x: AnyVal): T = sys.error("impossible")  // for completeness
   def ifAnyRef(x: AnyRef): T
   def ifNull(): T
   

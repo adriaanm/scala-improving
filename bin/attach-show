@@ -1,0 +1,4 @@
+#!/bin/bash
+#
+
+scala -cp target/*/classes improving.attach.cmd.Show $*
