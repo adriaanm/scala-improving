@@ -5,7 +5,7 @@
  */
 
 package improving
-package misc
+package comm
 
 import java.net._
 
