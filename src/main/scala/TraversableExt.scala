@@ -18,6 +18,18 @@ class TraversableExt[A, CC[X] <: Traversable[X]](coll: CC[A]) {
   def typeFilter[B <: AnyRef](implicit m: Manifest[B], bf: CanBuildFrom[CC[A], B, CC[B]]): CC[B] = {
     bf() ++= (coll collect reflect.typeCollector[B]) result
   }
+  
+  def distinctBy[T](f: A => T)(implicit eq: Equiv[T], bf: CanBuildFrom[CC[A], A, CC[A]]): CC[A] = {
+    val buf = bf(coll)
+    if (coll.isEmpty) buf.result
+    else {
+      val x = coll.head
+      val xs = coll.tail
+      buf += x
+      buf ++= (xs filterNot (y => eq.equiv(f(x), f(y)))).distinctBy[T](f)
+      buf.result
+    }
+  }
 
   def flatCollect[B](pf: PartialFunction[A, Traversable[B]])
     (implicit bf: CanBuildFrom[CC[A], B, CC[B]]): CC[B] =
