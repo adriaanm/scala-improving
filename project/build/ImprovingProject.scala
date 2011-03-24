@@ -37,8 +37,8 @@ class ImprovingProject(info: ProjectInfo)
   val javamail   = "javax.mail" % "mail" % "latest.integration"
   
   // testing
-  val scalacheck = "org.scala-tools.testing" %% "scalacheck" % "latest.integration" % "test" withSources()
-  val specs      = "org.scala-tools.testing" %% "specs" % "latest.integration" % "test" withSources()
+  val scalacheck = "org.scala-tools.testing" %% "scalacheck" % "1.8" % "test" withSources()
+  val specs      = "org.scala-tools.testing" %% "specs" % "1.6.7" % "test" withSources()
 }
 
 // a dummy trait on the main branch, see the publish branch for implementation.
