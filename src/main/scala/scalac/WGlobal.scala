@@ -1,6 +1,6 @@
 /** Improving: An unconstrained collection of scala code.
  *  Copyright 2005-2011 Paul Phillips
- * 
+ *
  *  Distributed under the "Simplified BSD License" in LICENSE.txt.
  */
 
@@ -8,6 +8,7 @@ package improving
 package scalac
 
 import scala.tools.nsc._
+import interpreter._
 import scala.collection.{ mutable, immutable, generic }
 import mutable.ListBuffer
 import util.{ SourceFile, BatchSourceFile, ScriptSourceFile }
@@ -15,22 +16,21 @@ import util.{ SourceFile, BatchSourceFile, ScriptSourceFile }
 class WGlobal(g: Global) extends {
   val global: Global = g
   type ImportInfo = global.analyzer.ImportInfo
-  type Context    = global.analyzer.Context  
-  
+  type Context    = global.analyzer.Context
+
 } with WContexts with WInfos {
-  
+
   import global.{ treeWrapper => _, _ }
   import definitions.{ RootClass }
   import analyzer.NoContext
-  
-  lazy val repl = new Interpreter(g.settings)
-  lazy val power = repl.power
-  // lazy val power = new interpreter.Power(repl)
+
+  lazy val repl = new IMain(g.settings)
+  lazy val power = Power(repl)
 
   private implicit def stringToPhase(name: String): Phase = currentRun phaseNamed name
-  
+
   // import analyzer._
-  // 
+  //
   // val analyzer  = global.analyzer
   // val erasure   = global.erasure
   // val infer     = typer.infer
@@ -38,7 +38,7 @@ class WGlobal(g: Global) extends {
   // val parser    = global.syntaxAnalyzer
   // val pickler   = global.pickler
   // val typer     = global.typer
-  // 
+  //
   // val NoContext = analyzer.NoContext
   // type Context = analyzer.Context
   // type ImplicitInfo = analyzer.ImplicitInfo
@@ -58,7 +58,7 @@ class WGlobal(g: Global) extends {
     slurpSymbols()
     allSyms.toSet
   }
-  
+
   private lazy val runSlurpSymbols: Unit = slurpSymbols()
   def slurpSymbols() = {
     val openingContents = allSyms.toSet
@@ -69,10 +69,10 @@ class WGlobal(g: Global) extends {
     def loop(in: immutable.Set[Symbol]) {
       val thisCount = in.size
       if (lastCount == thisCount)
-        return 
+        return
 
       lastCount = thisCount
-      val unseen = in filterNot allSyms  
+      val unseen = in filterNot allSyms
       val nextIn = unseen flatMap safeMembers
       allSyms ++= (unseen flatMap (_.ownerChain))
 
@@ -82,37 +82,37 @@ class WGlobal(g: Global) extends {
     println("Symbols: %d -> %d".format(openingCount, allSyms.size))
     allSyms -- openingContents
   }
-  
+
   def ph[T](body: => T): T    = atPhase(currentRun.typerPhase)(body)
   def phs: List[Phase]        = phaseNames map (currentRun phaseNamed _)
   def allph[T](op: => T)      = phs map (ph => (ph.name, atPhase(ph)(op)))
   def allphstr[T](op: => T)   = allph[T](op) map { case (ph, op) => "%15s -> %s".format(ph, op.toString take 240) }
   def showph(op: => Any)      = allphstr(op.toString) foreach (Console println _)
-  
+
   def mkContext(code: String)       = analyzer.rootContext(mkTypedUnit(code))
   def mkSourceFile(code: String)    = new BatchSourceFile("<console>", code)
   def mkScriptFile(code: String)    = new ScriptSourceFile(mkSourceFile(code), code.toArray, 0)
   def mkScriptFiles(codes: String*) = codes.toList map mkScriptFile
   def mkUnit(code: String)          = new CompilationUnit(mkSourceFile(code))
-  def mkTree (code: String)         = power.mkTrees(code).head
-  def mkTrees(code: String)         = power.mkTrees(code)
+  // def mkTree (code: String)         = power.mkTrees(code).head
+  // def mkTrees(code: String)         = power.mkTrees(code)
   def mkRun(stopAfter: Phase)       = new Run { override def stopPhase(name: String) = name == stopAfter.next.name }
   def mkTyperRun()                  = mkRun("typer")
   def mkPicklerRun()                = mkRun("pickler")
   def mkErasureRun()                = mkRun("erasure")
   def mkJvmRun()                    = mkRun("jvm")
-  def mkType(id: String): Type      = repl.stringToCompilerType(id).asInstanceOf[Type]
-  
+  // def mkType(id: String): Type      = repl.stringToCompilerType(id).asInstanceOf[Type]
+
   def missingWrap[T](body: => Type): Type =
     try body
     catch { case _: MissingRequirementError => NoType }
 
   def mkClass(name: String)  = missingWrap(definitions.getClass(newTermName(name)).tpe)
   def mkModule(name: String) = missingWrap(definitions.getModule(newTermName(name)).tpe)
-  
+
   def executeRun(code: String, stopAfter: Phase, srcFn: String => SourceFile) = {
     reporter.reset
-    val run = 
+    val run =
       if (stopAfter.name == "terminal") new Run
       else mkRun(stopAfter)
     run compileSources List(srcFn(code))
@@ -137,7 +137,7 @@ class WGlobal(g: Global) extends {
     def deftps = ph(tree filter (_.isInstanceOf[DefDef]) map (_.tpe))
     def valtps = ph(vals map (_.tpe))
 
-    def showtps = tree map (x => (x, x.tpe)) foreach { 
+    def showtps = tree map (x => (x, x.tpe)) foreach {
       case (tree, tp) =>
         if (tp == null || tp == NoType) ()
         else println(classStr(tree) + ": " + tp)
@@ -145,7 +145,7 @@ class WGlobal(g: Global) extends {
     def syms    = tree map (_.symbol) filterNot (x => x == null || x == NoSymbol)
     def tps     = ph(tree map (_.tpe) filterNot (x => x == null || x == NoType) distinct)
     def strs    = tree map treeStr
-    def show    = strs foreach println  
+    def show    = strs foreach println
   }
   class StringTreeOps(code: String) {
     val tree = mkFull(code)
@@ -169,7 +169,7 @@ object WGlobal {
       case null   => s.usejavacp.value = true
       case cp     => s.classpath.value = cp
     }
-    s    
+    s
   }
 
   def mkInteractive() = {
@@ -178,22 +178,22 @@ object WGlobal {
     val global = new interactive.Global(s, r) {
       override def validatePositions(tree: Tree) = ()
     }
-    
+
     new global.Run()
-    
+
     global
   }
   def mkGlobal() = {
     val s      = mkSettings()
     val r      = new reporters.ConsoleReporter(s)
     val global = new Global(s, r)
-    
+
     new global.Run()
     global
   }
-  
+
   implicit def treeFixer[T <: Global#Tree](x: Global#Tree): T = x.asInstanceOf[T]
-  
+
   def apply(global: Global) = new WGlobal(global)
   def apply(): WGlobal = apply(mkGlobal())
 }

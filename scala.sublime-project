@@ -1,0 +1,228 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/repo/scala-improving/scala.sublime-project",
+			"settings":
+			{
+				"buffer_size": 4798,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/repo/scala-improving/src/main/scala/scalac/WGlobal.scala",
+			"settings":
+			{
+				"buffer_size": 7039,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/sbt.sublime-build",
+	"file_history":
+	[
+		"/Users/paulp/Library/Application Support/Sublime Text 2/Packages/Default/Global.sublime-settings",
+		"/repo/scala-improving/LICENSE.txt",
+		"/repo/scala-improving/notes/0.9.1.markdown",
+		"/repo/scala-improving/project/build.properties",
+		"/repo/scala-improving/project/plugins/project/build.properties",
+		"/Users/paulp/Library/Application Support/Sublime Text 2/Packages/Default/Base File.sublime-settings",
+		"/repo/scala-improving/scala.sublime-project",
+		"/Volumes/SlowHD/soft/bin/2/Packages/D/D.sublime-build",
+		"/Volumes/SlowHD/soft/bin/2/Packages/Erlang/Erlang.sublime-build",
+		"/Volumes/SlowHD/soft/bin/2/Packages/Haskell/Haskell.sublime-build",
+		"/Volumes/SlowHD/soft/bin/2/Packages/Java/Ant.sublime-build",
+		"/Volumes/SlowHD/soft/bin/2/Packages/Java/JavaC.sublime-build",
+		"/Volumes/SlowHD/soft/bin/2/Packages/Makefile/Make.sublime-build",
+		"/Volumes/SlowHD/soft/bin/2/Packages/Python/Python.sublime-build",
+		"/Users/paulp/Library/Application Support/Sublime Text 2//Packages/User/sbt.sublime-build",
+		"/Users/paulp/Library/Application",
+		"/Volumes/SlowHD/soft/bin/Support/Sublime",
+		"/Volumes/SlowHD/soft/bin/Text",
+		"/Volumes/SlowHD/soft/bin/2/Packages/User/sbt.sublime-build",
+		"/Volumes/SlowHD/soft/bin/2/Packages/Ruby/Ruby.sublime-build",
+		"/repo/scala-improving/src/main/scala/function/WFunction1.scala",
+		"/repo/scala-improving/bin/attach-show",
+		"/repo/scala-improving/src/main/scala/ScalaWhich.scala",
+		"/repo/scala-improving/.ensime",
+		"/repo/scala-improving/src/main/scala/scalac/WGlobal.scala",
+		"/Users/paulp/Library/Application Support/Sublime Text 2/Packages/User/sbt.sublime-build"
+	],
+	"find_in_files":
+	{
+		"include_history":
+		[
+			""
+		],
+		"location_history":
+		[
+			"<open folders>"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"new Interpreter",
+			"mktree",
+			"110",
+			"/** "
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"new IMain"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer": false,
+		"whole_word": false,
+		"wrap": true
+	},
+	"folders":
+	{
+		"mount_points":
+		[
+			"/repo/scala-improving"
+		]
+	},
+	"groups":
+	[
+		{
+			"selected": 1,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/repo/scala-improving/scala.sublime-project",
+					"settings":
+					{
+						"buffer_size": 4798,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0,
+						"translation.y": 2634,
+						"zoom_level": 1
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/repo/scala-improving/src/main/scala/scalac/WGlobal.scala",
+					"settings":
+					{
+						"buffer_size": 7039,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5743,
+								5743
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Scala/Scala.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0,
+						"translation.y": 3499,
+						"zoom_level": 1
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0,
+			1
+		],
+		"rows":
+		[
+			0,
+			1
+		]
+	},
+	"menu_visible": true,
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0,
+		"selected_items":
+		[
+			[
+				"proper",
+				"project/plugins/project/build.properties"
+			],
+			[
+				"w",
+				"src/main/scala/function/WFunction1.scala"
+			],
+			[
+				"",
+				"LICENSE.txt"
+			],
+			[
+				"global",
+				"src/main/scala/scalac/WGlobal.scala"
+			],
+			[
+				"scala",
+				"src/main/scala/ScalaWhich.scala"
+			]
+		],
+		"width": 0
+	},
+	"select_project":
+	{
+		"height": 0,
+		"selected_items":
+		[
+		],
+		"width": 0
+	},
+	"show_minimap": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150,
+	"status_bar_visible": true
+}

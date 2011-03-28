@@ -4,7 +4,7 @@
  *  Distributed under the "Simplified BSD License" in LICENSE.txt.
  */
 
-package improving
+package improving  
 package function
 
 class NullSafeFn1[-T1, +R](f: T1 => R) extends (T1 => R) {

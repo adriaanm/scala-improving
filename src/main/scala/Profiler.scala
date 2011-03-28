@@ -4,6 +4,8 @@
  *  Distributed under the "Simplified BSD License" in LICENSE.txt.
  */
 
+/*** Disabled for creating a dependency on the yourkit jar.
+
 package improving
 package yourkit
 
@@ -36,3 +38,4 @@ trait Profiler {
 }
 
 object Profiler extends Profiler
+*/

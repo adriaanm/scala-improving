@@ -1,4 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 
-scala -cp target/*/classes improving.attach.cmd.Show $*
+/scala/inst/29/bin/scala \
+  -Dcom.sun.management.jmxremote \
+  -cp target/scala_2.9.0-1/classes \
+  improving.attach.cmd.Show \
+  "$@"
+
+if [[ $# -eq 0 ]]; then
+  echo "Running attach-list:"
+  $(dirname $0)/attach-list
+fi
