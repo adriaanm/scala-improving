@@ -11,6 +11,6 @@ package object improving extends Implicits {
   
   // compat
   object sys {
-    def error(msg: String) = Predef.error(msg)
+    def error(msg: String) = scala.sys.error(msg)
   }
 }

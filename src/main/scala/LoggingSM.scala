@@ -117,7 +117,7 @@ object LoggingSM {
 
     val s  = new GenericRunnerSettings(println)
     s.howtorun.value = "object"
-    s.nocompdaemon.value = true
+    s.nc.value = true
     val urls = new PathResolver(s).asURLs
 
     val sm = logging {            

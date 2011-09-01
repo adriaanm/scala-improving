@@ -7,13 +7,10 @@
 package improving
 package reflect
 
-import scala.reflect.{ Manifest, ClassManifest, OptManifest, NoManifest }
-
 object Numerical {
   import scala.math.ScalaNumber
-  import java.lang.{ Number, Character, Comparable }
-  import java.io.Serializable
-  import Manifest._
+  import java.lang.Character
+  import Manifest.{ Any, AnyVal, Object }
   
   /** Analyzes the manifest to see if there's any chance this is a
    *  primitive or boxed primitive numeric.
@@ -104,12 +101,12 @@ final class AnyRefExt[T <: AnyRef : OptManifest](value: T) extends AnyExt(value)
   def toCompanion: AnyRef     = Class forName toCompanionName getField "MODULE$" get null
   def methods: List[JMethod]  = toClass.getMethods.toList
   def toManifest: Manifest[T] = (optManifest match {
-    case x: Manifest[T]   => x
+    case x: Manifest[t]   => x
     case _                => Manifest.classType(toClass)
   }).asInstanceOf[Manifest[T]]
 
   def toClass: Class[T] = (optManifest match {
-    case x: Manifest[T]   => x.erasure
+    case x: Manifest[t]   => x.erasure
     case _                => if (value == null) null else value.getClass
   }).asInstanceOf[Class[T]]
   

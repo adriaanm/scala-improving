@@ -14,7 +14,7 @@ import scala.collection.{ mutable, immutable }
  *  moments when printing types tends to break everything.
  */
 class PostMortemTracer {
-  sys addShutdownHook show()
+  scala.sys addShutdownHook show()
   private val startTime = System.nanoTime
   
   def quieter(s: String) = List(
