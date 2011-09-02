@@ -7,8 +7,6 @@
 package improving
 package equality
 
-// import reflect.Manifest
-
 /**
  *  A convenience trait and class for simplifying the construction of equals and hashCode.
  *  If you use EqualsHelperClass, the arguments you pass to the constructor will be the

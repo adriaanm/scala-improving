@@ -20,7 +20,7 @@ class WGlobal(g: Global) extends {
 
 } with WContexts with WInfos {
 
-  import global.{ treeWrapper => _, _ }
+  import global._
   import definitions.{ RootClass }
   import analyzer.NoContext
 
@@ -45,7 +45,8 @@ class WGlobal(g: Global) extends {
 
   implicit def treeCollection(tree: Tree): List[Tree] = {
     val lb = new mutable.ListBuffer[Tree]
-    global.treeWrapper(tree) foreach (lb += _)
+    tree foreach (lb += _)
+    // global.treeWrapper(tree) foreach (lb += _)
     lb.toList
   }
 

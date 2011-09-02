@@ -1,11 +1,12 @@
 package improving.test
 
 import scala.tools.nsc._
+import interpreter.IMain
 import improving._
 import org.specs._
 
 object SymbolizeTest {
-  class UsesRepl extends Interpreter with Symbolize {
+  class UsesRepl extends IMain with Symbolize {
     class ReplUpdater extends Symbolize.Updater {
       def update[T: Manifest](lhs: String, rhs: T): Unit = {
         bind(lhs, manifest[T].toString, rhs)

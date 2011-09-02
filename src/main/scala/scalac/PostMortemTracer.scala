@@ -22,7 +22,7 @@ class PostMortemTracer {
   ).foldLeft(s) { case (s, (from, to)) => s.replaceAll(from, to) }
 
   def show() {
-    println("Elapsed time: " + ((System.nanoTime - startTime) / 1000000L) + " ms.")
+    println("Recorded " + calls.size + " calls.  Elapsed time: " + ((System.nanoTime - startTime) / 1000000L) + " ms.")
     
     ( calls.groupBy(_.method).toList 
           map { case (k, calls) => (k, { val xs = calls map (_.pos.nanos) ; (xs.size, xs.sum) }) }
