@@ -7,6 +7,8 @@ trait SonatypeOSS extends Build {
   def homeURL: String
   val ossSnapshots = "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
   val ossStaging   = "Sonatype OSS Staging" at "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+  
+  val publishDry = TaskKey[Unit]("publish-dry")
 
   private def makeReplacer(pairs: (String, Any)*): String => String = {
     pairs.foldLeft(_: String) {
@@ -23,7 +25,7 @@ trait SonatypeOSS extends Build {
     val url          = ( if (isSnapshot) ossSnapshots else ossStaging ).root
     val repositoryId = if (isSnapshot) "sonatype-nexus-snapshots" else "sonatype-nexus-staging"
 
-    def deployOne(artifact: Artifact, file: File) = {
+    def deployOne(artifact: Artifact, file: File, isDryRun: Boolean) = {
       val cmd = makeReplacer(
         "url"          -> url,
         "repositoryId" -> repositoryId,
@@ -33,8 +35,8 @@ trait SonatypeOSS extends Build {
         "classifier"   -> artifact.classifier.getOrElse("")
       )(mvnTemplate)
 
-      println("Run " + cmd + " in " + pomDir)
-      Process(cmd, cwd = pomDir).!
+      if (isDryRun) println("Will run '" + cmd + "' in " + pomDir + ".")
+      else Process(cmd, cwd = pomDir).!
     }
   }
 
@@ -77,14 +79,32 @@ trait SonatypeOSS extends Build {
       <url>{ homeURL }</url>
     </scm>
   )
+  
+  def makePublishTask(isDry: Boolean) = {
+    (version, makePom, packagedArtifacts) map { (v, p, as) =>
+      val info = new Info(v, p)
+      as foreach { case (a, f) => info.deployOne(a, f, isDry) }
+    }
+  }
 
   def sonatypeSettings: Seq[Setting[_]] = Seq(
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     pomIncludeRepository := ((x: MavenRepository) => false),
     pomExtra := generatePomExtra,
-    publish <<= (version, makePom, packagedArtifacts) flatMap { (ver, pom, arts) =>
-      val info = new Info(ver, pom)
-      task(arts foreach { case (artifact, file) => info.deployOne(artifact, file) })
-    }
+    publish <<= makePublishTask(false),
+    publishDry <<= makePublishTask(true)
+    // 
+    // (version, makePom, packagedArtifacts) map ((v, p, as) => 
+    //   new MapArtifacts(v, p, as) { val mapFn = info.deployOne(_, _, true) }
+    // )
+    // 
+    //  ((v, p, as) =>
+    //   foreachArtifact(v, p, as)(info.deployOne(_, _, false))
+    // )
+    // (version, makePom, packagedArtifacts) flatMap { (ver, pom, arts) =>
+    //   val info = new Info(ver, pom)
+    //   task(arts foreach { case (artifact, file) => info.deployOne(artifact, file, false) })
+    // },
+    // publishDry <<= (publish)(pub => 
   )
 }
