@@ -3,8 +3,8 @@ import Keys._
 
 /** Publishing to Sonatype from SBT is a *PITA*.
  */
-trait SonatypeOSS extends Build {
-  def homeURL: String
+class SonatypeOSSPublisher(build: Build, homeURL: String) {
+  import build._
 
   val ossSnapshots = "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
   val ossStaging   = "Sonatype OSS Staging" at "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
