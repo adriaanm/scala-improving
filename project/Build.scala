@@ -18,7 +18,7 @@ object Improving extends Build with SonatypeOSS {
   lazy val buildSettings = Seq(
     resolvers += ScalaToolsSnapshots,
     scalaVersion := "2.10.0-SNAPSHOT",
-    scalaHome := Some(file("/scala/inst/3")),
+    scalaHome := Some(file("/scala/trunk/build/pack")),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
     libraryDependencies <<= (scalaVersion)(
       sv => Seq(

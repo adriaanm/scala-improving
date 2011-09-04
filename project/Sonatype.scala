@@ -5,9 +5,9 @@ import Keys._
  */
 trait SonatypeOSS extends Build {
   def homeURL: String
+
   val ossSnapshots = "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
   val ossStaging   = "Sonatype OSS Staging" at "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-  
   val publishDry = TaskKey[Unit]("publish-dry")
 
   private def makeReplacer(pairs: (String, Any)*): String => String = {
@@ -17,7 +17,7 @@ trait SonatypeOSS extends Build {
   }
   private def templateArg(name: String) = "-D%s=@@%s@@".format(name, name)
   private def templateArgs = List("url", "repositoryId", "pomFile", "file", "packaging", "classifier") map templateArg
-  private val mvnTemplate = "mvn -Dgpg.passphrase gpg:sign-and-deploy-file " + templateArgs.mkString(" ")
+  private val mvnTemplate = "mvn -Dgpg.passphrase= gpg:sign-and-deploy-file " + templateArgs.mkString(" ")
 
   class Info(version: String, pomFile: File) {
     val pomDir       = pomFile.getParentFile
@@ -26,23 +26,43 @@ trait SonatypeOSS extends Build {
     val repositoryId = if (isSnapshot) "sonatype-nexus-snapshots" else "sonatype-nexus-staging"
 
     def deployOne(artifact: Artifact, file: File, isDryRun: Boolean) = {
-      val cmd = makeReplacer(
+      val cmd0 = makeReplacer(
         "url"          -> url,
         "repositoryId" -> repositoryId,
         "pomFile"      -> pomFile.name,
         "file"         -> file.name,
-        "packaging"    -> artifact.`type`,
+        "packaging"    -> artifact.extension,
         "classifier"   -> artifact.classifier.getOrElse("")
       )(mvnTemplate)
+      val cmd = cmd0.replaceAll("""-Dclassifier=($|\s+)""", "").trim
 
       if (isDryRun) println("Will run '" + cmd + "' in " + pomDir + ".")
       else Process(cmd, cwd = pomDir).!
     }
   }
 
-  def generatePomExtra() = (
+  def generatePomExtra(scalaVersion: String) = (
+    <parent>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
+    </parent>
+    <url>{ homeURL }</url>
     <build>
       <plugins>
+        <plugin>
+          <groupId>org.scala-tools</groupId>
+          <artifactId>maven-scala-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+                <goal>testCompile</goal>
+              </goals>
+            </execution>
+          </executions>
+          <version>{ scalaVersion }</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
@@ -90,7 +110,7 @@ trait SonatypeOSS extends Build {
   def sonatypeSettings: Seq[Setting[_]] = Seq(
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     pomIncludeRepository := ((x: MavenRepository) => false),
-    pomExtra := generatePomExtra,
+    pomExtra := generatePomExtra("2.10.0-SNAPSHOT"),
     publish <<= makePublishTask(false),
     publishDry <<= makePublishTask(true)
     // 
