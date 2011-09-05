@@ -31,8 +31,6 @@ object Improving extends Build {
   
   lazy val improvingSettings: Seq[Setting[_]] = (
     scalaSettings ++ projectSettings ++ dependencySettings ++ sonatype.sonatypeSettings ++ Seq(
-      // parallelExecution := false,
-      // fork := true
     )
   )
 }

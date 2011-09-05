@@ -21,7 +21,7 @@ class SonatypeOSSPublisher(build: Build, homeURL: String) {
 
   class Info(version: String, pomFile: File) {
     val pomDir       = pomFile.getParentFile
-    val isSnapshot   = version.trim endsWith "SNAPSHOT"
+    val isSnapshot   = version.trim endsWith "-SNAPSHOT"
     val url          = ( if (isSnapshot) ossSnapshots else ossStaging ).root
     val repositoryId = if (isSnapshot) "sonatype-nexus-snapshots" else "sonatype-nexus-staging"
 
@@ -110,21 +110,8 @@ class SonatypeOSSPublisher(build: Build, homeURL: String) {
   def sonatypeSettings: Seq[Setting[_]] = Seq(
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     pomIncludeRepository := ((x: MavenRepository) => false),
-    pomExtra := generatePomExtra("2.10.0-SNAPSHOT"),
+    pomExtra <<= (scalaVersion)(generatePomExtra(_)),
     publish <<= makePublishTask(false),
     publishDry <<= makePublishTask(true)
-    // 
-    // (version, makePom, packagedArtifacts) map ((v, p, as) => 
-    //   new MapArtifacts(v, p, as) { val mapFn = info.deployOne(_, _, true) }
-    // )
-    // 
-    //  ((v, p, as) =>
-    //   foreachArtifact(v, p, as)(info.deployOne(_, _, false))
-    // )
-    // (version, makePom, packagedArtifacts) flatMap { (ver, pom, arts) =>
-    //   val info = new Info(ver, pom)
-    //   task(arts foreach { case (artifact, file) => info.deployOne(artifact, file, false) })
-    // },
-    // publishDry <<= (publish)(pub => 
   )
 }
