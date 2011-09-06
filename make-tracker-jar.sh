@@ -22,4 +22,4 @@ jar cmf META-INF/MANIFEST.MF track-memory.jar *
 cp *.jar "$root"/libs
 cd "$root"
 
-echo scala -J-javaagent:target/track-memory.jar
+echo scala -J-javaagent:libs/track-memory.jar
