@@ -9,6 +9,7 @@ package memory
 import java.lang.management._
 import ManagementFactory.getMemoryPoolMXBeans
 import scala.collection.JavaConverters._
+import scala.tools.util.Signallable
 
 // +----------------------------------------------+
 // +////////////////           |                  +
@@ -38,17 +39,19 @@ case class WMemoryUsage(init: Long, used: Long, committed: Long, max: Long) {
 class TrackMemory {
   val startTime = System.nanoTime
 
-  scala.sys addShutdownHook {
-    val usage: WMemoryUsage = (
-      getMemoryPoolMXBeans.asScala
-      map (_.getPeakUsage)
-      map (mu => WMemoryUsage(mu.getInit, mu.getUsed, mu.getCommitted, mu.getMax))
-      reduceLeft (_ + _)
-    )
-
+  def currentUsage: WMemoryUsage = (
+    getMemoryPoolMXBeans.asScala
+    map (_.getPeakUsage)
+    map (mu => WMemoryUsage(mu.getInit, mu.getUsed, mu.getCommitted, mu.getMax))
+    reduceLeft (_ + _)
+  )
+  def showCurrentUsage() {
     println("\n    Elapsed: %.3f s".format((System.nanoTime - startTime) / 1000000000d))
-    println(usage)
+    println(currentUsage)
   }
+  
+  scala.sys addShutdownHook showCurrentUsage()
+  Signallable("USR1", "Show memory utilization statistics.")(showCurrentUsage())
 }
 
 object TrackMemory {

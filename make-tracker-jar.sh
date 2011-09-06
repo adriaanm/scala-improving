@@ -19,7 +19,7 @@ Created-By: 1.6.0_26 (Apple Inc.)
 EOM
 
 jar cmf META-INF/MANIFEST.MF track-memory.jar *
-cp *.jar "$root"/target
+cp *.jar "$root"/libs
 cd "$root"
 
 echo scala -J-javaagent:target/track-memory.jar
