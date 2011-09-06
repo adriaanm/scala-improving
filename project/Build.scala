@@ -15,6 +15,11 @@ object Improving extends Build {
   lazy val scalaSettings: Seq[Setting[_]] = Seq(
     resolvers += ScalaToolsSnapshots,
     scalaVersion := "2.10.0-SNAPSHOT",
+    crossScalaVersions := Seq("2.9.1", "2.10.0-SNAPSHOT"),
+    unmanagedSourceDirectories in Compile <++= (baseDirectory, scalaVersion)((bd, sv) => 
+      if (sv startsWith "2.10.") Seq(bd / "src" / "main" / "scala-2.10")
+      else Nil
+    ),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
     scalaHome := Some(file("/scala/trunk/build/pack"))
   )
