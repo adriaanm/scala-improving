@@ -41,7 +41,7 @@ final class RichClass[T](val self: JClass[T]) extends Proxy {
     self.getDeclaredConstructors() map (_.asInstanceOf[JConstructor[T]])
   
   private lazy val classLoader = self.getClassLoader match {
-    case null   => getSystemLoader
+    case null   => ClassLoader.getSystemClassLoader
     case x      => x
   }
   private val exceptions = List(

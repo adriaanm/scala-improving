@@ -10,7 +10,6 @@ package reflect
 object Numerical {
   import scala.math.ScalaNumber
   import java.lang.Character
-  import Manifest.{ Any, AnyVal, Object }
   
   /** Analyzes the manifest to see if there's any chance this is a
    *  primitive or boxed primitive numeric.
@@ -19,10 +18,10 @@ object Numerical {
   def isPossiblyNumeric[T: ClassManifest] : Boolean = {
     val m = classManifest[T]
     
-    (m == Any) ||
-    (m == Object) ||
+    (m == Manifest.Any) ||
+    (m == Manifest.Object) ||
     (m == classManifest[Character]) ||
-    ((m <:< AnyVal) && (m != Boolean) && (m != Unit)) ||
+    ((m <:< Manifest.AnyVal) && (m != Manifest.Boolean) && (m != Manifest.Unit)) ||
     ((m <:< classManifest[Number]) && !(m <:< classManifest[ScalaNumber])) ||
     (m == classManifest[Serializable]) ||
     (m == classManifest[Comparable[_]])
@@ -45,6 +44,7 @@ sealed abstract class AnyExt[T](value: T) {
   def toManifest: Manifest[_ <: T]
   def toClass: JClass[_ <: T]
   def methods: List[JMethod]
+  def fields: List[JField]
 
   /** Forward pipe */
   def |>[U](f : T => U) = f(value)
@@ -71,12 +71,14 @@ sealed abstract class AnyExt[T](value: T) {
 }
 
 final class AnyAnyExt(value: Any) extends AnyExt[Any](value) {
+  def fields: List[JField]    = toClass.getFields.toList
   def methods: List[JMethod]  = toClass.getMethods.toList
   def toManifest: Manifest[_] = Manifest.classType(toClass)
   def toClass: JClass[_]      = toAnyRef.getClass
 }
 
 final class AnyValExt[T <: AnyVal : OptManifest](value: T) extends AnyExt(value) {
+  def fields: List[JField]   = Nil
   def methods: List[JMethod] = Nil
   def toManifest: Manifest[T] = ClassManifest.fromClass(toClass).asInstanceOf[Manifest[T]]
   def toClass: Class[T] = (value match {
@@ -95,10 +97,17 @@ final class AnyValExt[T <: AnyVal : OptManifest](value: T) extends AnyExt(value)
 final class AnyRefExt[T <: AnyRef : OptManifest](value: T) extends AnyExt(value) {
   private def optManifest = implicitly[OptManifest[T]]
   
+  def outerField: Option[JField]    = fields find (_.getName == "$outer")
+  def outerInstance: Option[AnyRef] = outerField map (_ get value)
+  def outerChain: List[AnyRef]      = value :: {
+    outerInstance map (_.outerChain) getOrElse Nil
+  }
+  
   def toCompanionName = toClass.getName + (
     if (hasModuleName) "" else "$"
   )
   def toCompanion: AnyRef     = Class forName toCompanionName getField "MODULE$" get null
+  def fields: List[JField]    = toClass.getFields.toList
   def methods: List[JMethod]  = toClass.getMethods.toList
   def toManifest: Manifest[T] = (optManifest match {
     case x: Manifest[t]   => x

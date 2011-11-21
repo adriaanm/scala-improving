@@ -7,6 +7,7 @@
 package object improving extends Implicits {
   type JClass[T]   = java.lang.Class[T]
   type JMethod     = java.lang.reflect.Method
+  type JField      = java.lang.reflect.Field
   type ScalaSymbol = scala.Symbol
   
   // compat
