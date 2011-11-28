@@ -15,16 +15,21 @@ trait Benchmark {
   
   case class Run[+T](result: T, millis: Long)
   case class RaceResult(time1: Long, time2: Long) {
-    def speedup = math.abs(time2 - time1) * 100 / (time2 max time1)
+    def speedup = {
+      val maxtime = (time2 max time1)
+      if (maxtime == 0) -1
+      else math.abs(time2 - time1) * 100 / maxtime
+    }
     def winner  = if (time2 > time1) "First" else "Second"
     
     def resultString = {
-      if (time1 == time2 || speedup == 0) "Virtual tie"
+      if (speedup == -1) "Not enough information"
+      else if (time1 == time2 || speedup == 0) "Virtual tie"
       else "%s body %d%% faster.".format(winner, speedup)
     }
     override def toString = resultString
   }
-  case class Race[+T, +U](f1: () => T, f2: () => U) {
+  case class Race[+T, +U](f1: () => T, f2: () => U)(multiplier: Int) {
     var isDebug = false
     
     /** Keeps dialing up the repetitions until the same speedup is
@@ -61,10 +66,10 @@ trait Benchmark {
     def multitime(reps: Int)(body: => Unit): Long = {
       var total: Long = 0
       var index = 0
-      while (index < reps) {
-        val t1 = System.currentTimeMillis
+      while (index < reps * multiplier) {
+        val t1 = System.nanoTime
         body
-        val t2 = System.currentTimeMillis
+        val t2 = System.nanoTime
         total += (t2 - t1)
         index += 1
       }
@@ -91,9 +96,9 @@ trait Benchmark {
   }
   
   def time[T](body: => T): Run[T] = {
-    val t1 = System.currentTimeMillis
+    val t1 = System.nanoTime
     val res = body
-    val t2 = System.currentTimeMillis
+    val t2 = System.nanoTime
     
     Run(res, t2 - t1)
   }
@@ -108,7 +113,7 @@ trait Benchmark {
   }
 
   def race[T,U](body1: => T, body2: => U): Race[T, U] =
-    Race(() => body1, () => body2)
+    Race(() => body1, () => body2)(1)
 }
 
 object Benchmark extends Benchmark
